@@ -128,8 +128,8 @@ class OpenApiGenerator
                                 'schema' => (new Schema(
                                     type: 'object',
                                     children: collect([
-                                        'message' => new Schema(type: 'string'),
-                                        'errors' => new Schema(type: 'array', childType: 'string'),
+                                        'message' => new Schema('string'),
+                                        'errors' => new Schema(type: 'array', childSchema: new Schema('string')),
                                     ])
                                 ))->toArray(),
                             ],

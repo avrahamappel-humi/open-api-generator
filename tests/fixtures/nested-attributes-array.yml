@@ -1,0 +1,56 @@
+openapi: 3.0.0
+info:
+    version: 1.0.0
+    title: 'Example API'
+servers:
+    -
+        url: 'http://example.com'
+        description: 'The main production server'
+paths:
+    /nested-attributes:
+        post:
+            operationId: store
+            tags:
+                - NestedAttributesArrayController
+            responses:
+                200:
+                    description: Success
+                422:
+                    description: 'Invalid submission'
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                required:
+                                    - message
+                                    - errors
+                                properties:
+                                    message:
+                                        type: string
+                                    errors:
+                                        type: array
+                                        items:
+                                            type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            required:
+                                - data
+                            properties:
+                                data:
+                                    type: array
+                                    items:
+                                        type: object
+                                        required:
+                                            - attributes
+                                        properties:
+                                            attributes:
+                                                type: object
+                                                required:
+                                                    - foo
+                                                properties:
+                                                    foo:
+                                                        type: string
+                required: true

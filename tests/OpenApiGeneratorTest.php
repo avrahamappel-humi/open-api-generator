@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Route;
 use Tests\Http\Controllers\EmptyRulesController;
 use Tests\Http\Controllers\InvokableController;
 use Tests\Http\Controllers\LoginController;
+use Tests\Http\Controllers\NestedAttributesArrayController;
+use Tests\Http\Controllers\NestedAttributesController;
 use Tests\Http\Controllers\NoInterfaceController;
 use Tests\Http\Controllers\OptionalRulesController;
 
@@ -69,6 +71,27 @@ class OpenApiGeneratorTest extends TestCase
 
         self::assertSame(file_get_contents(__DIR__ . '/fixtures/optional-rules.yml'), $yaml);
     }
-    // test nested attributes
-    // test nested attributes with array
+    /**
+     * @test
+     */
+    public function it_generates_an_openapi_spec_for_rules_with_nested_attributes()
+    {
+        Route::post('nested-attributes', NestedAttributesController::class . '@store');
+
+        $yaml = app(OpenApiGenerator::class)->generate();
+
+        self::assertSame(file_get_contents(__DIR__ . '/fixtures/nested-attributes.yml'), $yaml);
+    }
+
+    /**
+     * @test
+     */
+    public function it_generates_an_openapi_spec_for_rules_with_nested_attribute_arrays()
+    {
+        Route::post('nested-attributes', NestedAttributesArrayController::class . '@store');
+
+        $yaml = app(OpenApiGenerator::class)->generate();
+
+        self::assertSame(file_get_contents(__DIR__ . '/fixtures/nested-attributes-array.yml'), $yaml);
+    }
 }

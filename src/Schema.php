@@ -17,7 +17,7 @@ class Schema implements Arrayable
         protected string $type,
         protected bool $required = true,
         protected string $format = '',
-        protected string $childType = '',
+        protected ?Schema $childSchema = null,
         Collection $children = null
     ) {
         if ($type === 'object') {
@@ -31,33 +31,38 @@ class Schema implements Arrayable
                 )
             );
             $this->children = $children ?? new Collection();
-            $this->children->each(fn(Schema $child) => $child->setParent($this));
+            $this->children->each(fn(Schema $child) => ($child->parent = $this));
         }
 
         if ($type === 'array') {
-            throw_if(!$childType, new Exception('Schema type was set to `array`, but no child type was provided.'));
+            throw_if(!$childSchema, new Exception('Schema type was set to `array`, but no child schema was provided.'));
+            $this->childSchema->parent = $this;
         }
     }
 
-    public static function fromValidationRules(array $rules): static
+    public static function fromValidationRules(array|string $rules): static
     {
-        return new static(type: 'object', children: static::fromRules(Arr::undot($rules)));
+        if (is_string($rules)) {
+            $rules = explode('|', $rules);
+        }
+
+        if (array_is_list($rules)) {
+            return static::fromRuleList($rules);
+        }
+
+        if (isset($rules['*'])) {
+            return new static(type: 'array', childSchema: static::fromValidationRules($rules['*']));
+        }
+
+        return new static(type: 'object', children: static::fromValidationRulesArray(Arr::undot($rules)));
     }
 
-    protected static function fromRules(array $rules): Collection
+    protected static function fromValidationRulesArray(array $rulesArray): Collection
     {
-        return collect($rules)->map(function (array|string $rule, string $field) {
-            $rules = is_string($rule) ? explode('|', $rule) : $rule;
-
-            if (!array_is_list($rules)) {
-                return new Schema(type: 'object', children: static::fromRules($rules));
-            }
-
-            return static::fromRuleList($field, $rules);
-        });
+        return collect($rulesArray)->map(fn($rules) => static::fromValidationRules($rules));
     }
 
-    protected static function fromRuleList(string $field, array $rules): static
+    protected static function fromRuleList(array $rules): static
     {
         $required = true;
         $type = 'string';
@@ -77,10 +82,6 @@ class Schema implements Arrayable
                 case 'array':
                     $type = 'object';
                     break;
-                // TODO figure out what to do with arrays
-                /* case '*': */
-                /*     $type = 'array'; */
-                /*     break; */
 
                 // FORMAT SPECIFICATIONS
                 case 'email':
@@ -115,7 +116,7 @@ class Schema implements Arrayable
             'type' => $this->type,
         ];
 
-        if (!isset($this->parent)) {
+        if ($this->shouldShowRequired()) {
             $array['required'] = $this->required();
         }
 
@@ -128,14 +129,18 @@ class Schema implements Arrayable
         }
 
         if ($this->type === 'array') {
-            $array['items'] = ['type' => $this->childType];
+            $array['items'] = $this->childSchema->toArray();
         }
 
         return $array;
     }
 
-    protected function setParent(Schema $parent)
+    protected function shouldShowRequired(): bool
     {
-        $this->parent = $parent;
+        if (isset($this->parent) && $this->type !== 'object') {
+            return false;
+        }
+
+        return $this->required;
     }
 }
