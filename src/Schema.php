@@ -1,6 +1,6 @@
 <?php
 
-namespace Humi\OpenApiGenerator\Objects;
+namespace Humi\OpenApiGenerator;
 
 use Exception;
 use Illuminate\Contracts\Support\Arrayable;
@@ -61,8 +61,6 @@ class Schema implements Arrayable
     {
         $required = true;
         $type = 'string';
-        $min = '';
-        $max = '';
         $format = '';
 
         foreach ($rules as $rule) {
@@ -92,22 +90,6 @@ class Schema implements Arrayable
                     $format = 'password';
                     break;
             }
-        }
-
-        $fieldSchema = [
-            'type' => $type,
-        ];
-
-        if ($min) {
-            $fieldSchema[$type === 'string' ? 'minLength' : 'minimum'] = $min;
-        }
-
-        if ($max) {
-            $fieldSchema[$type === 'string' ? 'maxLength' : 'maximum'] = $max;
-        }
-
-        if ($format) {
-            $fieldSchema['format'] = $format;
         }
 
         return new Schema(type: $type, required: $required, format: $format);

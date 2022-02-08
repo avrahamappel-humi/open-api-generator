@@ -2,15 +2,11 @@
 
 namespace Humi\OpenApiGenerator;
 
-use Humi\OpenApiGenerator\Objects\Schema;
+use Humi\OpenApiGenerator\Schema;
 use Illuminate\Config\Repository;
 use Illuminate\Routing\Route;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Arr;
-use phpDocumentor\Reflection\DocBlockFactory;
-use ReflectionMethod;
-use ReflectionNamedType;
-use ReflectionParameter;
 use Symfony\Component\Yaml\Yaml;
 
 class OpenApiGenerator
@@ -19,12 +15,9 @@ class OpenApiGenerator
 
     protected array $config;
 
-    protected DocBlockFactory $docBlockFactory;
-
     public function __construct(Repository $config, protected Router $router)
     {
         $this->config = $config['open-api-generator'];
-        $this->docBlockFactory = DocBlockFactory::createInstance();
     }
 
     public function generate(): string
@@ -69,19 +62,14 @@ class OpenApiGenerator
 
     protected function generateSpecFromRoute(Route $route): array
     {
-        $reflectionMethod = new ReflectionMethod(str_replace('@', '::', $route->getActionName()));
+        $action = new Action($route);
 
-        $requests = collect($reflectionMethod->getParameters())->filter(
-            fn($param) => $this->hasRequestInterfaceParam($param)
-        );
-
-        if ($requests->isEmpty()) {
+        if (!$action->hasRequest()) {
             return [];
         }
 
-        $request = $requests[0];
-        $requestObject = $this->getRequestObject($request->getType());
-        $hasRules = !empty($requestObject->rules());
+        $request = $action->getRequest();
+        $hasRules = !empty($request->rules());
 
         $spec = [
             'operationId' => $route->getActionMethod(),
@@ -89,48 +77,19 @@ class OpenApiGenerator
             'responses' => $this->generateResponses($hasRules),
         ];
 
-        if ($summary = $this->generateSummary($reflectionMethod)) {
+        if ($summary = $action->getSummary()) {
             $spec['summary'] = $summary;
         }
 
-        if ($description = $this->generateDescription($reflectionMethod)) {
+        if ($description = $action->getDescription()) {
             $spec['description'] = $description;
         }
 
         if ($hasRules) {
-            $spec['requestBody'] = $this->generateRequestBody($requestObject);
+            $spec['requestBody'] = $this->generateRequestBody($request);
         }
 
         return $spec;
-    }
-
-    protected function hasRequestInterfaceParam(ReflectionParameter $param)
-    {
-        $type = $param->getType();
-
-        if (!($type instanceof ReflectionNamedType)) {
-            return false;
-        }
-
-        return class_exists($type->getName()) &&
-            array_search(RequestInterface::class, class_implements($type->getName()));
-    }
-
-    protected function getRequestObject(ReflectionNamedType $type): RequestInterface
-    {
-        $class = $type->getName();
-
-        return new $class();
-    }
-
-    protected function generateSummary(ReflectionMethod $method): string
-    {
-        return $this->docBlockFactory->create($method->getDocComment())->getSummary();
-    }
-
-    protected function generateDescription(ReflectionMethod $method): string
-    {
-        return $this->docBlockFactory->create($method->getDocComment())->getDescription();
     }
 
     protected function generateRequestBody(RequestInterface $request): array
