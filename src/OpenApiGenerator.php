@@ -63,7 +63,7 @@ class OpenApiGenerator
                     ->map(fn(Route $route) => $this->generateSpecFromRoute($route))
                     ->filter()
             )
-            ->filter()
+            ->filter->isNotEmpty()
             ->toArray();
     }
 
