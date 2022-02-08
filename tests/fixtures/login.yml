@@ -3,12 +3,12 @@ info:
     version: 1.0.0
     title: 'Example API'
 servers:
-    - url: 'http://example.com'
-      description: 'The main production server'
+    -
+        url: 'http://example.com'
+        description: 'The main production server'
 paths:
     /login:
         post:
-            summary: Log in
             operationId: login
             tags:
                 - LoginController
@@ -31,6 +31,7 @@ paths:
                                         type: array
                                         items:
                                             type: string
+            summary: 'Log into the application.'
             requestBody:
                 content:
                     application/json:

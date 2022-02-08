@@ -7,6 +7,7 @@ use Illuminate\Config\Repository;
 use Illuminate\Routing\Route;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Arr;
+use phpDocumentor\Reflection\DocBlockFactory;
 use ReflectionMethod;
 use ReflectionNamedType;
 use ReflectionParameter;
@@ -16,11 +17,14 @@ class OpenApiGenerator
 {
     public const OPENAPI_VERSION = '3.0.0';
 
-    public array $config;
+    protected array $config;
+
+    protected DocBlockFactory $docBlockFactory;
 
     public function __construct(Repository $config, protected Router $router)
     {
         $this->config = $config['open-api-generator'];
+        $this->docBlockFactory = DocBlockFactory::createInstance();
     }
 
     public function generate(): string
@@ -39,8 +43,6 @@ class OpenApiGenerator
             'servers' => $this->mapServers(),
             'paths' => $pathSpecs,
         ];
-
-        dump($spec);
 
         return Yaml::dump($spec, 20, 4, Yaml::PARSE_EXCEPTION_ON_INVALID_TYPE);
     }
@@ -82,11 +84,18 @@ class OpenApiGenerator
         $hasRules = !empty($requestObject->rules());
 
         $spec = [
-            'summary' => $this->generateSummary($reflectionMethod),
             'operationId' => $route->getActionMethod(),
             'tags' => $this->generateTags($route),
             'responses' => $this->generateResponses($hasRules),
         ];
+
+        if ($summary = $this->generateSummary($reflectionMethod)) {
+            $spec['summary'] = $summary;
+        }
+
+        if ($description = $this->generateDescription($reflectionMethod)) {
+            $spec['description'] = $description;
+        }
 
         if ($hasRules) {
             $spec['requestBody'] = $this->generateRequestBody($requestObject);
@@ -116,8 +125,12 @@ class OpenApiGenerator
 
     protected function generateSummary(ReflectionMethod $method): string
     {
-        dump($method);
-        return $method->getDocComment();
+        return $this->docBlockFactory->create($method->getDocComment())->getSummary();
+    }
+
+    protected function generateDescription(ReflectionMethod $method): string
+    {
+        return $this->docBlockFactory->create($method->getDocComment())->getDescription();
     }
 
     protected function generateRequestBody(RequestInterface $request): array
