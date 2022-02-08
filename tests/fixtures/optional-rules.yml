@@ -1,0 +1,76 @@
+openapi: 3.0.0
+info:
+    version: 1.0.0
+    title: 'Example API'
+servers:
+    -
+        url: 'http://example.com'
+        description: 'The main production server'
+paths:
+    /optional-rules:
+        get:
+            operationId: index
+            tags:
+                - OptionalRulesController
+            responses:
+                200:
+                    description: Success
+                422:
+                    description: 'Invalid submission'
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                required:
+                                    - message
+                                    - errors
+                                properties:
+                                    message:
+                                        type: string
+                                    errors:
+                                        type: array
+                                        items:
+                                            type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            required: false
+                            properties:
+                                page:
+                                    type: number
+                required: false
+        head:
+            operationId: index
+            tags:
+                - OptionalRulesController
+            responses:
+                200:
+                    description: Success
+                422:
+                    description: 'Invalid submission'
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                required:
+                                    - message
+                                    - errors
+                                properties:
+                                    message:
+                                        type: string
+                                    errors:
+                                        type: array
+                                        items:
+                                            type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            required: false
+                            properties:
+                                page:
+                                    type: number
+                required: false

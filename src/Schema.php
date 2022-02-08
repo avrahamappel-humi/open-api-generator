@@ -98,10 +98,12 @@ class Schema implements Arrayable
     public function required(): bool|array
     {
         if ($this->type === 'object') {
-            return $this->children->filter
+            $requiredArray = $this->children->filter
                 ->required()
                 ->keys()
                 ->all();
+
+            return empty($requiredArray) ? false : $requiredArray;
         }
 
         return $this->required;

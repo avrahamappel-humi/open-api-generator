@@ -4,9 +4,11 @@ namespace Tests;
 
 use Humi\OpenApiGenerator\OpenApiGenerator;
 use Illuminate\Support\Facades\Route;
+use Tests\Http\Controllers\EmptyRulesController;
 use Tests\Http\Controllers\InvokableController;
 use Tests\Http\Controllers\LoginController;
 use Tests\Http\Controllers\NoInterfaceController;
+use Tests\Http\Controllers\OptionalRulesController;
 
 class OpenApiGeneratorTest extends TestCase
 {
@@ -43,8 +45,30 @@ class OpenApiGeneratorTest extends TestCase
 
         self::assertSame(file_get_contents(__DIR__ . '/fixtures/invokable.yml'), $yaml);
     }
-    // test a request with no rules
-    // test a request with optional rules
+
+    /**
+     * @test
+     */
+    public function it_generates_an_open_api_spec_even_if_the_rules_array_is_empty()
+    {
+        Route::get('empty-rules', EmptyRulesController::class . '@index');
+
+        $yaml = app(OpenApiGenerator::class)->generate();
+
+        self::assertSame(file_get_contents(__DIR__ . '/fixtures/empty-rules.yml'), $yaml);
+    }
+
+    /**
+     * @test
+     */
+    public function it_generates_an_openapi_spec_with_optional_rules()
+    {
+        Route::get('optional-rules', OptionalRulesController::class . '@index');
+
+        $yaml = app(OpenApiGenerator::class)->generate();
+
+        self::assertSame(file_get_contents(__DIR__ . '/fixtures/optional-rules.yml'), $yaml);
+    }
     // test nested attributes
     // test nested attributes with array
 }

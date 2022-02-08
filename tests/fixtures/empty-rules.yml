@@ -1,0 +1,24 @@
+openapi: 3.0.0
+info:
+    version: 1.0.0
+    title: 'Example API'
+servers:
+    -
+        url: 'http://example.com'
+        description: 'The main production server'
+paths:
+    /empty-rules:
+        get:
+            operationId: index
+            tags:
+                - EmptyRulesController
+            responses:
+                200:
+                    description: Success
+        head:
+            operationId: index
+            tags:
+                - EmptyRulesController
+            responses:
+                200:
+                    description: Success
