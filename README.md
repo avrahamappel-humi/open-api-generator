@@ -1,6 +1,6 @@
 # OpenAPI Generator
 
-Very basic.
+WIP.
 
 ## Generate OpenAPI documentation
 
