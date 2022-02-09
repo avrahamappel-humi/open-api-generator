@@ -1,0 +1,33 @@
+name: Code style and OpenAPI spec validation
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Cache NPM packages
+      id: npm-cache
+      uses: actions/cache@v2
+      with:
+        path: vendor
+        key: ${{ runner.os }}-npm-${{ hashFiles('**/package.json') }}
+        restore-keys: |
+          ${{ runner.os }}-npm-
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Check code style
+      run: node_modules/.bin/prettier
+
+    - name: Validate test spec files
+      run: npm run validate-test-specs
