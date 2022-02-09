@@ -20,4 +20,9 @@ return [
             'description' => 'The main production server',
         ],
     ],
+
+    /**
+     * The path of the generated YAML file.
+     */
+    'file_path' => base_path('open-api.yml'),
 ];

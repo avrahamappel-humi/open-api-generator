@@ -14,6 +14,6 @@ class OpenApiGenerateCommand extends Command
     {
         $yaml = $generator->generate();
 
-        file_put_contents($config['open-api.generator.file_path'], $yaml);
+        file_put_contents($config['open-api-generator.file_path'], $yaml);
     }
 }
