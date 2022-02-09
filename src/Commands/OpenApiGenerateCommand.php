@@ -10,6 +10,8 @@ class OpenApiGenerateCommand extends Command
 {
     public $signature = 'open-api:generate';
 
+    public $description = 'Generate OpenAPI documentation for your application.';
+
     public function handle(OpenApiGenerator $generator, Repository $config)
     {
         $yaml = $generator->generate();

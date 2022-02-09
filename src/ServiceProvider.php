@@ -14,5 +14,7 @@ class ServiceProvider extends BaseServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([OpenApiGenerateCommand::class]);
         }
+
+        $this->publishes([__DIR__ . '/../config/open-api-generator.php', config_path('open-api-generator.php')]);
     }
 }
