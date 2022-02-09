@@ -40,7 +40,7 @@ class Schema implements Arrayable
         }
     }
 
-    public static function fromValidationRules(array|string $rules): static
+    public static function fromValidationRules(array|string $rules): Schema
     {
         if (is_string($rules)) {
             $rules = explode('|', $rules);
@@ -51,10 +51,10 @@ class Schema implements Arrayable
         }
 
         if (isset($rules['*'])) {
-            return new static(type: 'array', childSchema: static::fromValidationRules($rules['*']));
+            return new Schema(type: 'array', childSchema: static::fromValidationRules($rules['*']));
         }
 
-        return new static(type: 'object', children: static::fromValidationRulesArray(Arr::undot($rules)));
+        return new Schema(type: 'object', children: static::fromValidationRulesArray(Arr::undot($rules)));
     }
 
     protected static function fromValidationRulesArray(array $rulesArray): Collection
@@ -62,7 +62,7 @@ class Schema implements Arrayable
         return collect($rulesArray)->map(fn($rules) => static::fromValidationRules($rules));
     }
 
-    protected static function fromRuleList(array $rules): static
+    protected static function fromRuleList(array $rules): Schema
     {
         $required = true;
         $type = 'string';
