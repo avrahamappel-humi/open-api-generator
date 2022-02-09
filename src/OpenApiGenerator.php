@@ -74,7 +74,6 @@ class OpenApiGenerator
         $spec = [
             'operationId' => $route->getActionMethod(),
             'tags' => $this->generateTags($route),
-            'responses' => $this->generateResponses($hasRules),
         ];
 
         if ($summary = $action->getSummary()) {
@@ -87,6 +86,10 @@ class OpenApiGenerator
 
         if ($hasRules) {
             $spec['requestBody'] = $this->generateRequestBody($request);
+        }
+
+        if ($responses = $this->generateResponses()) {
+            $spec['responses'] = $responses;
         }
 
         return $spec;
@@ -111,33 +114,9 @@ class OpenApiGenerator
         return [class_basename(Arr::first(explode('@', $route->getActionName())))];
     }
 
-    protected function generateResponses(bool $hasValidation): array
+    protected function generateResponses(): array
     {
-        return array_replace(
-            [
-                '200' => [
-                    'description' => 'Success',
-                ],
-            ],
-            $hasValidation
-                ? [
-                    '422' => [
-                        'description' => 'Invalid submission',
-                        'content' => [
-                            'application/json' => [
-                                'schema' => (new Schema(
-                                    type: 'object',
-                                    children: collect([
-                                        'message' => new Schema('string'),
-                                        'errors' => new Schema(type: 'array', childSchema: new Schema('string')),
-                                    ])
-                                ))->toArray(),
-                            ],
-                        ],
-                    ],
-                ]
-                : []
-        );
+        return [];
     }
 
     protected function mapServers(): array

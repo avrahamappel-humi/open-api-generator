@@ -12,25 +12,6 @@ paths:
             operationId: store
             tags:
                 - NestedAttributesArrayController
-            responses:
-                200:
-                    description: Success
-                422:
-                    description: 'Invalid submission'
-                    content:
-                        application/json:
-                            schema:
-                                type: object
-                                required:
-                                    - message
-                                    - errors
-                                properties:
-                                    message:
-                                        type: string
-                                    errors:
-                                        type: array
-                                        items:
-                                            type: string
             requestBody:
                 content:
                     application/json:
