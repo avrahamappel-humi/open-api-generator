@@ -27,7 +27,7 @@ jobs:
       run: npm install
 
     - name: Check code style
-      run: node_modules/.bin/prettier
+      run: node_modules/.bin/prettier -c config src tests
 
     - name: Validate test spec files
       run: npm run validate-test-specs
