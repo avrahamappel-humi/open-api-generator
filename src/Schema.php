@@ -23,14 +23,14 @@ class Schema implements Arrayable
         if ($type === 'object') {
             throw_if(!$children, new Exception('Schema type was set to `object`, but no children were provided.'));
             throw_if(
-                array_is_list($children->all()),
+                Arr::isList($children->all()),
                 new Exception(
                     "An associative array must be provided when creating a Schema of type `object`, received [{$children->implode(
                         ', '
                     )}]"
                 )
             );
-            $this->children = $children ?? new Collection();
+            $this->children = $children;
             $this->children->each(fn(Schema $child) => ($child->parent = $this));
         }
 
@@ -46,7 +46,7 @@ class Schema implements Arrayable
             $rules = explode('|', $rules);
         }
 
-        if (array_is_list($rules)) {
+        if (Arr::isList($rules)) {
             return static::fromRuleList($rules);
         }
 
