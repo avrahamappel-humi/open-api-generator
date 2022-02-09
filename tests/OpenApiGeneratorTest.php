@@ -11,6 +11,7 @@ use Tests\Http\Controllers\NestedAttributesArrayController;
 use Tests\Http\Controllers\NestedAttributesController;
 use Tests\Http\Controllers\NoInterfaceController;
 use Tests\Http\Controllers\OptionalRulesController;
+use Tests\Http\Requests\ClosureRequest;
 
 class OpenApiGeneratorTest extends TestCase
 {
@@ -32,6 +33,18 @@ class OpenApiGeneratorTest extends TestCase
     public function it_doesnt_generate_an_openapi_spec_from_a_controller_method_without_the_request_interface()
     {
         Route::get('no-interface', NoInterfaceController::class . '@index');
+
+        self::assertSame('', app(OpenApiGenerator::class)->generate());
+    }
+
+    /**
+     * @test
+     */
+    public function it_doesnt_generate_an_openapi_spec_from_a_closure_route_definition()
+    {
+        Route::get('closure', function (ClosureRequest $request) {
+            return 'Hello world!';
+        });
 
         self::assertSame('', app(OpenApiGenerator::class)->generate());
     }

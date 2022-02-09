@@ -62,7 +62,7 @@ class OpenApiGenerator
 
     protected function generateSpecFromRoute(Route $route): array
     {
-        $action = new Action($route);
+        $action = Action::fromRoute($route);
 
         if (!$action->hasRequest()) {
             return [];

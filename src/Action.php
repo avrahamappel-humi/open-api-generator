@@ -11,20 +11,17 @@ use ReflectionParameter;
 class Action
 {
     protected ReflectionMethod $method;
-    protected DocBlockFactory $docBlockFactory;
     protected RequestInterface $request;
 
-    public function __construct(Route $route)
+    public function __construct(Route $route, protected DocBlockFactory $docBlockFactory)
     {
-        $this->method = $this->reflectControllerMethod($route->getActionName());
-        $this->docBlockFactory = DocBlockFactory::createInstance();
-        $requests = collect($this->method->getParameters())->filter(
-            fn($param) => $this->hasRequestInterfaceParam($param)
-        );
+        $this->setMethod($route);
+        $this->setRequest();
+    }
 
-        if (count($requests)) {
-            $this->request = $this->getRequestObject($requests[0]->getType());
-        }
+    public static function fromRoute(Route $route): Action
+    {
+        return app(Action::class, ['route' => $route]);
     }
 
     public function hasRequest(): bool
@@ -55,6 +52,15 @@ class Action
         return $this->docBlockFactory->create($this->method->getDocComment())->getDescription();
     }
 
+    protected function setMethod(Route $route): void
+    {
+        if ($route->getActionName() === 'Closure') {
+            return;
+        }
+
+        $this->method = $this->reflectControllerMethod($route->getActionName());
+    }
+
     protected function reflectControllerMethod(string $actionName): ReflectionMethod
     {
         if (str_contains($actionName, '@')) {
@@ -68,7 +74,22 @@ class Action
         return new ReflectionMethod($actionName);
     }
 
-    protected function hasRequestInterfaceParam(ReflectionParameter $param)
+    protected function setRequest(): void
+    {
+        if (!isset($this->method)) {
+            return;
+        }
+
+        $requests = collect($this->method->getParameters())->filter(
+            fn($param) => $this->hasRequestInterfaceParam($param)
+        );
+
+        if (count($requests)) {
+            $this->request = $this->getRequestObject($requests[0]->getType());
+        }
+    }
+
+    protected function hasRequestInterfaceParam(ReflectionParameter $param): bool
     {
         $type = $param->getType();
 
