@@ -12,7 +12,13 @@ paths:
             operationId: index
             tags:
                 - EmptyRulesController
+            responses:
+                200:
+                    description: Ok
         head:
             operationId: index
             tags:
                 - EmptyRulesController
+            responses:
+                200:
+                    description: Ok

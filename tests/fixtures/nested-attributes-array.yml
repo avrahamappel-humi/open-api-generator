@@ -35,3 +35,6 @@ paths:
                                                     foo:
                                                         type: string
                 required: true
+            responses:
+                200:
+                    description: Ok

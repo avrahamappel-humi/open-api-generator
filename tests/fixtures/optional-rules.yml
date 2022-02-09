@@ -17,11 +17,13 @@ paths:
                     application/json:
                         schema:
                             type: object
-                            required: false
                             properties:
                                 page:
                                     type: number
                 required: false
+            responses:
+                200:
+                    description: Ok
         head:
             operationId: index
             tags:
@@ -31,8 +33,10 @@ paths:
                     application/json:
                         schema:
                             type: object
-                            required: false
                             properties:
                                 page:
                                     type: number
                 required: false
+            responses:
+                200:
+                    description: Ok

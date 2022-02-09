@@ -26,3 +26,6 @@ paths:
                                 sin:
                                     type: number
                 required: true
+            responses:
+                200:
+                    description: Ok

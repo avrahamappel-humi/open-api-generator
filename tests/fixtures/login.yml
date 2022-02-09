@@ -29,3 +29,6 @@ paths:
                                     type: string
                                     format: password
                 required: true
+            responses:
+                200:
+                    description: Ok

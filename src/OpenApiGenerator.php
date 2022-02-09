@@ -116,7 +116,7 @@ class OpenApiGenerator
 
     protected function generateResponses(): array
     {
-        return [];
+        return ['200' => ['description' => 'Ok']];
     }
 
     protected function mapServers(): array

@@ -47,7 +47,6 @@ The generated OpenAPI spec will be located in `open-api.yml` at the root of your
 
 ## What's left to do?
 
--   [ ] Add OpenAPI verification to the test files
 -   [ ] Add more OpenAPI data types (enum, max/min, etc.)
 -   [ ] Response types
 -   [ ] Use $refs

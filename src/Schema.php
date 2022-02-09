@@ -99,12 +99,10 @@ class Schema implements Arrayable
     public function required(): bool|array
     {
         if ($this->type === 'object') {
-            $requiredArray = $this->children->filter
+            return $this->children->filter
                 ->required()
                 ->keys()
                 ->all();
-
-            return empty($requiredArray) ? false : $requiredArray;
         }
 
         return $this->required;
@@ -116,8 +114,8 @@ class Schema implements Arrayable
             'type' => $this->type,
         ];
 
-        if ($this->shouldShowRequired()) {
-            $array['required'] = $this->required();
+        if ($required = $this->shouldShowRequired()) {
+            $array['required'] = $required;
         }
 
         if ($this->format) {
@@ -135,12 +133,12 @@ class Schema implements Arrayable
         return $array;
     }
 
-    protected function shouldShowRequired(): bool
+    protected function shouldShowRequired(): bool|array
     {
         if (isset($this->parent) && $this->type !== 'object') {
             return false;
         }
 
-        return $this->required;
+        return $this->required();
     }
 }

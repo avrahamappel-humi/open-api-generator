@@ -1,5 +1,9 @@
 {
+    "scripts": {
+        "validate-test-specs": "for file in tests/fixtures/*.yml; do node_modules/.bin/swagger-cli validate $file; done"
+    },
     "devDependencies": {
+        "@apidevtools/swagger-cli": "^4.0.4",
         "@prettier/plugin-php": "^0.17.6",
         "prettier": "^2.4.1"
     },
