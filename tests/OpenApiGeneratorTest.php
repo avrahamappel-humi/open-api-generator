@@ -84,6 +84,7 @@ class OpenApiGeneratorTest extends TestCase
 
         self::assertSame(file_get_contents(__DIR__ . '/fixtures/optional-rules.yml'), $yaml);
     }
+
     /**
      * @test
      */

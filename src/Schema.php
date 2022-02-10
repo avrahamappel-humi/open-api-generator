@@ -59,7 +59,9 @@ class Schema implements Arrayable
 
     protected static function fromValidationRulesArray(array $rulesArray): Collection
     {
-        return collect($rulesArray)->map(fn($rules) => static::fromValidationRules($rules));
+        return collect($rulesArray)
+            ->filter(fn($v, $k) => !is_numeric($k))
+            ->map(fn($rules) => static::fromValidationRules($rules));
     }
 
     protected static function fromRuleList(array $rules): Schema

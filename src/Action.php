@@ -103,8 +103,6 @@ class Action
 
     protected function getRequestObject(ReflectionNamedType $type): RequestInterface
     {
-        $class = $type->getName();
-
-        return new $class();
+        return app($type->getName());
     }
 }
