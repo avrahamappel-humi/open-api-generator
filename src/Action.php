@@ -11,12 +11,10 @@ use ReflectionParameter;
 class Action
 {
     protected ReflectionMethod $method;
-    protected RequestInterface $request;
 
     public function __construct(Route $route, protected DocBlockFactory $docBlockFactory)
     {
         $this->setMethod($route);
-        $this->setRequest();
     }
 
     public static function fromRoute(Route $route): Action
@@ -24,14 +22,29 @@ class Action
         return app(Action::class, ['route' => $route]);
     }
 
-    public function hasRequest(): bool
+    public function canBeMapped(): bool
     {
-        return isset($this->request);
+        return isset($this->method) &&
+            array_filter($this->method->getParameters(), fn($param) => $this->hasRequestInterfaceParam($param));
     }
 
-    public function getRequest(): RequestInterface
+    public function getRules(): array
     {
-        return $this->request;
+        if (!isset($this->method)) {
+            return [];
+        }
+
+        $requests = collect($this->method->getParameters())->filter(
+            fn($param) => $this->hasRequestInterfaceParam($param)
+        );
+
+        if ($requests->isEmpty()) {
+            return [];
+        }
+
+        $request = $this->getRequestObject($requests[0]->getType());
+
+        return $request->rules();
     }
 
     public function getSummary(): string
@@ -72,21 +85,6 @@ class Action
         }
 
         return new ReflectionMethod($actionName);
-    }
-
-    protected function setRequest(): void
-    {
-        if (!isset($this->method)) {
-            return;
-        }
-
-        $requests = collect($this->method->getParameters())->filter(
-            fn($param) => $this->hasRequestInterfaceParam($param)
-        );
-
-        if (count($requests)) {
-            $this->request = $this->getRequestObject($requests[0]->getType());
-        }
     }
 
     protected function hasRequestInterfaceParam(ReflectionParameter $param): bool

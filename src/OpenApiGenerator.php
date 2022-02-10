@@ -64,12 +64,11 @@ class OpenApiGenerator
     {
         $action = Action::fromRoute($route);
 
-        if (!$action->hasRequest()) {
+        if (!$action->canBeMapped()) {
             return [];
         }
 
-        $request = $action->getRequest();
-        $hasRules = !empty($request->rules());
+        $rules = $action->getRules();
 
         $spec = [
             'operationId' => $route->getActionMethod(),
@@ -84,8 +83,8 @@ class OpenApiGenerator
             $spec['description'] = $description;
         }
 
-        if ($hasRules) {
-            $spec['requestBody'] = $this->generateRequestBody($request);
+        if (!empty($rules)) {
+            $spec['requestBody'] = $this->generateRequestBody($rules);
         }
 
         if ($responses = $this->generateResponses()) {
@@ -95,9 +94,9 @@ class OpenApiGenerator
         return $spec;
     }
 
-    protected function generateRequestBody(RequestInterface $request): array
+    protected function generateRequestBody(array $rules): array
     {
-        $schema = Schema::fromValidationRules($request->rules());
+        $schema = Schema::fromValidationRules($rules);
 
         return [
             'content' => [
