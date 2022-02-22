@@ -9,9 +9,9 @@ servers:
 paths:
     /nested-attributes:
         post:
-            operationId: store
+            operationId: Tests\Http\Controllers\NestedAttributesArrayController@store
             tags:
-                - NestedAttributesArrayController
+                - NestedAttributesArray
             requestBody:
                 content:
                     application/json:

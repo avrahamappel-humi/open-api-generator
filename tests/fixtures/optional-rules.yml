@@ -9,9 +9,9 @@ servers:
 paths:
     /optional-rules:
         get:
-            operationId: index
+            operationId: Tests\Http\Controllers\OptionalRulesController@index
             tags:
-                - OptionalRulesController
+                - OptionalRules
             requestBody:
                 content:
                     application/json:
@@ -25,9 +25,9 @@ paths:
                 200:
                     description: Ok
         head:
-            operationId: index
+            operationId: Tests\Http\Controllers\OptionalRulesController@index
             tags:
-                - OptionalRulesController
+                - OptionalRules
             requestBody:
                 content:
                     application/json:

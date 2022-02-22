@@ -11,7 +11,7 @@ paths:
         post:
             operationId: Tests\Http\Controllers\InvokableController
             tags:
-                - InvokableController
+                - Invokable
             requestBody:
                 content:
                     application/json:

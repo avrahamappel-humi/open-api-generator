@@ -9,9 +9,9 @@ servers:
 paths:
     /login:
         post:
-            operationId: login
+            operationId: Tests\Http\Controllers\LoginController@login
             tags:
-                - LoginController
+                - Login
             summary: 'Log into the application.'
             requestBody:
                 content:

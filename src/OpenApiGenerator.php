@@ -6,7 +6,7 @@ use Humi\OpenApiGenerator\Schema;
 use Illuminate\Config\Repository;
 use Illuminate\Routing\Route;
 use Illuminate\Routing\Router;
-use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Symfony\Component\Yaml\Yaml;
 
 class OpenApiGenerator
@@ -71,7 +71,7 @@ class OpenApiGenerator
         $rules = $action->getRules();
 
         $spec = [
-            'operationId' => $route->getActionMethod(),
+            'operationId' => $route->getActionName(),
             'tags' => $this->generateTags($route),
         ];
 
@@ -108,9 +108,17 @@ class OpenApiGenerator
         ];
     }
 
+    /**
+     * Generate a default list of tags for this action.
+     * Currently defaults to the controller name, minus the word "Controller".
+     */
     protected function generateTags(Route $route): array
     {
-        return [class_basename(Arr::first(explode('@', $route->getActionName())))];
+        return Str::of($route->getActionName())
+            ->explode('@')
+            ->take(1)
+            ->map(fn($string) => Str::before(class_basename($string), 'Controller'))
+            ->toArray();
     }
 
     protected function generateResponses(): array

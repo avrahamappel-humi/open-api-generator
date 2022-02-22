@@ -9,16 +9,16 @@ servers:
 paths:
     /empty-rules:
         get:
-            operationId: index
+            operationId: Tests\Http\Controllers\EmptyRulesController@index
             tags:
-                - EmptyRulesController
+                - EmptyRules
             responses:
                 200:
                     description: Ok
         head:
-            operationId: index
+            operationId: Tests\Http\Controllers\EmptyRulesController@index
             tags:
-                - EmptyRulesController
+                - EmptyRules
             responses:
                 200:
                     description: Ok
