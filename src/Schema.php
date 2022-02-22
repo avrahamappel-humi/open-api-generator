@@ -40,6 +40,13 @@ class Schema implements Arrayable
         }
     }
 
+    public static function fromType(string $type): Schema
+    {
+        // if class string implements resource interface, get model class, make new resource with new model, call toArray, and figure out type
+
+        return new Schema($type);
+    }
+
     public static function fromValidationRules(array|string $rules): Schema
     {
         if (is_string($rules)) {

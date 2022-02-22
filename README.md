@@ -37,8 +37,8 @@ class MyRequest extends FormRequest implements RequestInterface
     public function rules(): array
     {
         return [
-            // Some validation rules ...
-        ];
+                // Some validation rules ...
+            ];
     }
 }
 ```
@@ -68,5 +68,5 @@ The generated OpenAPI spec will be located in `open-api.yml` at the root of your
 ## What's left to do?
 
 -   [ ] Add more OpenAPI data types (enum, max/min, etc.)
--   [ ] Response types
+-   [x] Response types
 -   [ ] Use $refs

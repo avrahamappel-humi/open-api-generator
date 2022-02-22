@@ -65,6 +65,21 @@ class Action
         return $this->docBlockFactory->create($this->reflection->getDocComment())->getDescription();
     }
 
+    public function getReturn(): ?string
+    {
+        $type = $this->method->getReturnType();
+
+        if (!$type) {
+            return null;
+        }
+
+        if ($type instanceof ReflectionNamedType) {
+            return $type->getName();
+        }
+
+        return $type->getTypes()[0];
+    }
+
     protected function setReflection(Route $route): void
     {
         if ($route->getActionName() === 'Closure') {

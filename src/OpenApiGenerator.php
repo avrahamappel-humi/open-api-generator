@@ -87,7 +87,7 @@ class OpenApiGenerator
             $spec['requestBody'] = $this->generateRequestBody($rules);
         }
 
-        if ($responses = $this->generateResponses()) {
+        if ($responses = $this->generateResponses($action)) {
             $spec['responses'] = $responses;
         }
 
@@ -121,9 +121,17 @@ class OpenApiGenerator
             ->toArray();
     }
 
-    protected function generateResponses(): array
+    protected function generateResponses(Action $action): array
     {
-        return ['200' => ['description' => 'Ok']];
+        $defaultResponse = ['description' => 'Ok'];
+
+        if ($returnType = $action->getReturn()) {
+            $defaultResponse['content'] = [
+                'application/json' => ['schema' => Schema::fromType($returnType)->toArray()],
+            ];
+        }
+
+        return ['200' => $defaultResponse];
     }
 
     protected function mapServers(): array
