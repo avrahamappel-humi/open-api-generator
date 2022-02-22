@@ -50,3 +50,4 @@ The generated OpenAPI spec will be located in `open-api.yml` at the root of your
 -   [ ] Add more OpenAPI data types (enum, max/min, etc.)
 -   [ ] Response types
 -   [ ] Use $refs
+-   [ ] Allow opt-in using an `#[Attribute]` instead of typehinting a request object (for instances where the request object isn't used and rules aren't necessary)
