@@ -5,15 +5,13 @@ namespace Tests;
 use Humi\OpenApiGenerator\OpenApiGenerator;
 use Illuminate\Support\Facades\Route;
 use Tests\Http\Controllers\EmptyRulesController;
-use Tests\Http\Controllers\InvokableController;
 use Tests\Http\Controllers\LoginController;
 use Tests\Http\Controllers\NestedAttributesArrayController;
 use Tests\Http\Controllers\NestedAttributesController;
-use Tests\Http\Controllers\NoInterfaceController;
 use Tests\Http\Controllers\OptionalRulesController;
 use Tests\Http\Requests\ClosureRequest;
 
-class OpenApiGeneratorTest extends TestCase
+class RequestInterfaceTest extends TestCase
 {
     /**
      * @test
@@ -30,16 +28,6 @@ class OpenApiGeneratorTest extends TestCase
     /**
      * @test
      */
-    public function it_doesnt_generate_an_openapi_spec_from_a_controller_method_without_the_request_interface()
-    {
-        Route::get('no-interface', NoInterfaceController::class . '@index');
-
-        self::assertSame('', app(OpenApiGenerator::class)->generate());
-    }
-
-    /**
-     * @test
-     */
     public function it_doesnt_generate_an_openapi_spec_from_a_closure_route_definition()
     {
         Route::get('closure', function (ClosureRequest $request) {
@@ -49,17 +37,7 @@ class OpenApiGeneratorTest extends TestCase
         self::assertSame('', app(OpenApiGenerator::class)->generate());
     }
 
-    /**
-     * @test
-     */
-    public function it_generates_an_openapi_spec_from_an_invokable_controller()
-    {
-        Route::post('invokable', InvokableController::class);
-
-        $yaml = app(OpenApiGenerator::class)->generate();
-
-        self::assertSame(file_get_contents(__DIR__ . '/fixtures/invokable.yml'), $yaml);
-    }
+    // it generates an openapi spec from a request with a rules method
 
     /**
      * @test

@@ -7,11 +7,11 @@ servers:
         url: 'http://example.com'
         description: 'The main production server'
 paths:
-    /invokable:
+    /attribute:
         post:
-            operationId: Tests\Http\Controllers\InvokableController
+            operationId: Tests\Http\Controllers\AttributeController@index
             tags:
-                - Invokable
+                - Attribute
             responses:
                 200:
                     description: Ok

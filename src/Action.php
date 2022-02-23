@@ -2,6 +2,7 @@
 
 namespace Humi\OpenApiGenerator;
 
+use Humi\OpenApiGenerator\Attributes\OpenApi;
 use Illuminate\Routing\Route;
 use phpDocumentor\Reflection\DocBlockFactory;
 use ReflectionMethod;
@@ -10,11 +11,11 @@ use ReflectionParameter;
 
 class Action
 {
-    protected ReflectionMethod $method;
+    protected ReflectionMethod $reflection;
 
     public function __construct(Route $route, protected DocBlockFactory $docBlockFactory)
     {
-        $this->setMethod($route);
+        $this->setReflection($route);
     }
 
     public static function fromRoute(Route $route): Action
@@ -24,17 +25,16 @@ class Action
 
     public function canBeMapped(): bool
     {
-        return isset($this->method) &&
-            array_filter($this->method->getParameters(), fn($param) => $this->hasRequestInterfaceParam($param));
+        return $this->hasAttribute() || $this->hasRequestInterface();
     }
 
     public function getRules(): array
     {
-        if (!isset($this->method)) {
+        if (!isset($this->reflection)) {
             return [];
         }
 
-        $requests = collect($this->method->getParameters())->filter(
+        $requests = collect($this->reflection->getParameters())->filter(
             fn($param) => $this->hasRequestInterfaceParam($param)
         );
 
@@ -49,29 +49,29 @@ class Action
 
     public function getSummary(): string
     {
-        if (!$this->method->getDocComment()) {
+        if (!$this->reflection->getDocComment()) {
             return '';
         }
 
-        return $this->docBlockFactory->create($this->method->getDocComment())->getSummary();
+        return $this->docBlockFactory->create($this->reflection->getDocComment())->getSummary();
     }
 
     public function getDescription(): string
     {
-        if (!$this->method->getDocComment()) {
+        if (!$this->reflection->getDocComment()) {
             return '';
         }
 
-        return $this->docBlockFactory->create($this->method->getDocComment())->getDescription();
+        return $this->docBlockFactory->create($this->reflection->getDocComment())->getDescription();
     }
 
-    protected function setMethod(Route $route): void
+    protected function setReflection(Route $route): void
     {
         if ($route->getActionName() === 'Closure') {
             return;
         }
 
-        $this->method = $this->reflectControllerMethod($route->getActionName());
+        $this->reflection = $this->reflectControllerMethod($route->getActionName());
     }
 
     protected function reflectControllerMethod(string $actionName): ReflectionMethod
@@ -87,6 +87,26 @@ class Action
         return new ReflectionMethod($actionName);
     }
 
+    protected function hasAttribute(): bool
+    {
+        if (!isset($this->reflection)) {
+            return false;
+        }
+
+        return count($this->reflection->getAttributes(OpenApi::class));
+    }
+
+    protected function hasRequestInterface(): bool
+    {
+        if (!isset($this->reflection)) {
+            return false;
+        }
+
+        return collect($this->reflection->getParameters())
+            ->filter(fn($param) => $this->hasRequestInterfaceParam($param))
+            ->isNotEmpty();
+    }
+
     protected function hasRequestInterfaceParam(ReflectionParameter $param): bool
     {
         $type = $param->getType();
@@ -95,8 +115,12 @@ class Action
             return false;
         }
 
-        return class_exists($type->getName()) &&
-            array_search(RequestInterface::class, class_implements($type->getName()));
+        if (!class_exists($type->getName())) {
+            return false;
+        }
+
+        return array_search(RequestInterface::class, class_implements($type->getName())) ||
+            method_exists($type->getName(), 'rules');
     }
 
     protected function getRequestObject(ReflectionNamedType $type): RequestInterface
