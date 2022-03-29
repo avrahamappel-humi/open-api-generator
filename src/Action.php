@@ -67,7 +67,7 @@ class Action
 
     public function getReturn(): ?string
     {
-        $type = $this->method->getReturnType();
+        $type = $this->reflection->getReturnType();
 
         if (!$type) {
             return null;

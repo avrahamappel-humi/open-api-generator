@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use Humi\OpenApiGenerator\OpenApiGenerator;
 use Illuminate\Support\Facades\Route;
 use Tests\Http\Controllers\StringResponseController;
 
