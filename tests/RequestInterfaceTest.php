@@ -37,8 +37,6 @@ class RequestInterfaceTest extends TestCase
         self::assertSame('', app(OpenApiGenerator::class)->generate());
     }
 
-    // it generates an openapi spec from a request with a rules method
-
     /**
      * @test
      */
