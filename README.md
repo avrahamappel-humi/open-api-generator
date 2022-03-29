@@ -37,8 +37,8 @@ class MyRequest extends FormRequest implements RequestInterface
     public function rules(): array
     {
         return [
-                // Some validation rules ...
-            ];
+            // Some validation rules ...
+        ];
     }
 }
 ```
