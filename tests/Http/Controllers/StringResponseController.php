@@ -2,11 +2,12 @@
 
 namespace Tests\Http\Controllers;
 
-use Tests\Http\Requests\StringResponseRequest;
+use Humi\OpenApiGenerator\Attributes\OpenApi;
 
 class StringResponseController
 {
-    public function __invoke(StringResponseRequest $request): string
+    #[OpenApi]
+    public function __invoke(): string
     {
         return 'Hello world!!';
     }
