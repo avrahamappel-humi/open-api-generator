@@ -2,11 +2,9 @@
 
 namespace Tests\Http\Controllers;
 
-use Illuminate\Http\Request;
-
 class NoInterfaceController
 {
-    public function index(Request $request)
+    public function index()
     {
         return response("Here's some stuff.");
     }

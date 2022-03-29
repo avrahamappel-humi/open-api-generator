@@ -4,8 +4,28 @@ WIP.
 
 ## Generate OpenAPI documentation
 
-For the generator to pick up your routes, you need to typehint an instance of the `Humi\OpenApiGenerator\RequestInterface` as your request. Any Laravel FormRequest will do, just add the interface to the class.
+There are two ways to to get the generator to pick up your routes.
 
+The first way is to decorate the controller method with the `Humi\OpenApiGenerator\Attributes\OpenApi` attribute.
+
+```php
+<?php
+
+use Humi\OpenApiGenerator\Attributes\OpenApi;
+
+class MyController
+{
+    #[OpenApi]
+    public function index()
+    {
+        // ...
+    }
+}
+```
+
+The second way is to typehint an instance of the `Humi\OpenApiGenerator\RequestInterface` as the request argument. Any Laravel FormRequest will do (or really anything, as long as it has a `rules` method), just add the interface to the class.
+
+<!-- prettier-ignore -->
 ```php
 <?php
 
@@ -50,4 +70,3 @@ The generated OpenAPI spec will be located in `open-api.yml` at the root of your
 -   [ ] Add more OpenAPI data types (enum, max/min, etc.)
 -   [ ] Response types
 -   [ ] Use $refs
--   [ ] Allow opt-in using an `#[Attribute]` instead of typehinting a request object (for instances where the request object isn't used and rules aren't necessary)

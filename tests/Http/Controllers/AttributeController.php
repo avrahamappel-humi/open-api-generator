@@ -4,11 +4,11 @@ namespace Tests\Http\Controllers;
 
 use Humi\OpenApiGenerator\Attributes\OpenApi;
 
-class InvokableController
+class AttributeController
 {
     #[OpenApi]
-    public function __invoke()
+    public function index()
     {
-        return "Great stuff y'all.";
+        return 'I love OpenAPI and OpenAPI loves me!!';
     }
 }
