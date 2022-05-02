@@ -137,7 +137,7 @@ class OpenApiGenerator
             ];
         }
 
-        return ['200' => $defaultResponse];
+        return ['default' => $defaultResponse];
     }
 
     protected function mapServers(): array
