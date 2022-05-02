@@ -50,11 +50,11 @@ class SchemaTest extends TestCase
     /**
      * @test
      */
-    public function it_includes_a_required_attribute_as_a_boolean_in_an_array_schema()
+    public function it_does_not_include_a_required_attribute_in_an_array_schema()
     {
         $schema = new Schema('array', childSchema: new Schema('string'));
 
-        self::assertSame('boolean', gettype($schema->toArray()['required'] ?? null));
+        self::assertArrayNotHasKey('required', $schema->toArray());
     }
 
     /**
