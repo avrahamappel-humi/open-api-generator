@@ -87,7 +87,7 @@ class OpenApiGenerator
             $spec['requestBody'] = $this->generateRequestBody($rules);
         }
 
-        if ($responses = $this->generateResponses()) {
+        if ($responses = $this->generateResponses($action)) {
             $spec['responses'] = $responses;
         }
 
@@ -109,7 +109,8 @@ class OpenApiGenerator
     }
 
     /**
-     * Generate a default list of tags for this action.
+     * Generate a default list of tags for this action
+     *
      * Currently defaults to the controller name, minus the word "Controller".
      */
     protected function generateTags(Route $route): array
@@ -121,9 +122,22 @@ class OpenApiGenerator
             ->toArray();
     }
 
-    protected function generateResponses(): array
+    /**
+     * Generate responses for an action
+     *
+     * Currently only generates the default (success) response.
+     */
+    protected function generateResponses(Action $action): array
     {
-        return ['200' => ['description' => 'Ok']];
+        $defaultResponse = ['description' => 'Ok'];
+
+        if ($returnType = $action->getReturn()) {
+            $defaultResponse['content'] = [
+                'application/json' => ['schema' => Schema::fromType($returnType)->toArray()],
+            ];
+        }
+
+        return ['default' => $defaultResponse];
     }
 
     protected function mapServers(): array

@@ -1,0 +1,32 @@
+openapi: 3.0.0
+info:
+    version: 1.0.0
+    title: 'Example API'
+servers:
+    -
+        url: 'http://example.com'
+        description: 'The main production server'
+paths:
+    /string:
+        get:
+            operationId: Tests\Http\Controllers\StringResponseController
+            tags:
+                - StringResponse
+            responses:
+                default:
+                    description: Ok
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+        head:
+            operationId: Tests\Http\Controllers\StringResponseController
+            tags:
+                - StringResponse
+            responses:
+                default:
+                    description: Ok
+                    content:
+                        application/json:
+                            schema:
+                                type: string

@@ -13,5 +13,5 @@ paths:
             tags:
                 - Invokable
             responses:
-                200:
+                default:
                     description: Ok

@@ -1,6 +1,6 @@
 {
     "scripts": {
-        "validate-test-specs": "for file in tests/fixtures/*.yml; do node_modules/.bin/swagger-cli validate $file; done"
+        "validate-test-specs": "for file in tests/fixtures/*.yml; do echo \"Checking $file\"; node_modules/.bin/swagger-cli validate $file; done"
     },
     "devDependencies": {
         "@apidevtools/swagger-cli": "^4.0.4",

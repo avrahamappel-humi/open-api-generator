@@ -40,6 +40,19 @@ class Schema implements Arrayable
         }
     }
 
+    /**
+     * Create an instance of Schema from a scalar type (except array or object) or a class FQN
+     */
+    public static function fromType(string $type): Schema
+    {
+        // if class string implements resource interface, get model class, make new resource with new model, call toArray, and figure out type
+
+        return new Schema($type);
+    }
+
+    /**
+     * Create an instance of Schema from an associative array of dotted names => validation rules
+     */
     public static function fromValidationRules(array|string $rules): Schema
     {
         if (is_string($rules)) {
@@ -57,6 +70,9 @@ class Schema implements Arrayable
         return new Schema(type: 'object', children: static::fromValidationRulesArray(Arr::undot($rules)));
     }
 
+    /**
+     * Create a collection of Schema objects as children of a parent Schema
+     */
     protected static function fromValidationRulesArray(array $rulesArray): Collection
     {
         return collect($rulesArray)
@@ -64,6 +80,9 @@ class Schema implements Arrayable
             ->map(fn($rules) => static::fromValidationRules($rules));
     }
 
+    /**
+     * Create a single instance of Schema from a list of validation rules
+     */
     protected static function fromRuleList(array $rules): Schema
     {
         $required = true;
@@ -98,6 +117,12 @@ class Schema implements Arrayable
         return new Schema(type: $type, required: $required, format: $format);
     }
 
+    /**
+     * Returns the `required` attribute
+     *
+     * This is a boolean, except in the case of an object schema, for which it
+     * will be an array of attribute names that are required in the object.
+     */
     public function required(): bool|array
     {
         if ($this->type === 'object') {
@@ -135,12 +160,24 @@ class Schema implements Arrayable
         return $array;
     }
 
+    /**
+     * Returns the value of the `required` attribute as required by JSONSchema
+     *
+     * This means it will return an array if the schema is an object schema
+     * and it contains required children. Otherwise, it will return false.
+     */
     protected function shouldShowRequired(): bool|array
     {
-        if (isset($this->parent) && $this->type !== 'object') {
+        if ($this->type !== 'object') {
             return false;
         }
 
-        return $this->required();
+        $required = $this->required();
+
+        if (empty($required)) {
+            return false;
+        }
+
+        return $required;
     }
 }

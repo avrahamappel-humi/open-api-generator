@@ -13,12 +13,12 @@ paths:
             tags:
                 - EmptyRules
             responses:
-                200:
+                default:
                     description: Ok
         head:
             operationId: Tests\Http\Controllers\EmptyRulesController@index
             tags:
                 - EmptyRules
             responses:
-                200:
+                default:
                     description: Ok

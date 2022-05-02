@@ -36,5 +36,5 @@ paths:
                                                         type: string
                 required: true
             responses:
-                200:
+                default:
                     description: Ok

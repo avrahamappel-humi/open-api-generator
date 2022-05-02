@@ -22,7 +22,7 @@ paths:
                                     type: number
                 required: false
             responses:
-                200:
+                default:
                     description: Ok
         head:
             operationId: Tests\Http\Controllers\OptionalRulesController@index
@@ -38,5 +38,5 @@ paths:
                                     type: number
                 required: false
             responses:
-                200:
+                default:
                     description: Ok
