@@ -109,7 +109,8 @@ class OpenApiGenerator
     }
 
     /**
-     * Generate a default list of tags for this action.
+     * Generate a default list of tags for this action
+     *
      * Currently defaults to the controller name, minus the word "Controller".
      */
     protected function generateTags(Route $route): array
@@ -121,6 +122,11 @@ class OpenApiGenerator
             ->toArray();
     }
 
+    /**
+     * Generate responses for an action
+     *
+     * Currently only generates the default (success) response.
+     */
     protected function generateResponses(Action $action): array
     {
         $defaultResponse = ['description' => 'Ok'];
