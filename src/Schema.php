@@ -156,10 +156,10 @@ class Schema implements Arrayable
 
     protected function shouldShowRequired(): bool|array
     {
-        if (isset($this->parent) && $this->type !== 'object') {
-            return false;
+        if (in_array($this->type, ['object', 'array'])) {
+            return $this->required();
         }
 
-        return $this->required();
+        return false;
     }
 }

@@ -19,7 +19,6 @@ paths:
                         application/json:
                             schema:
                                 type: string
-                                required: true
         head:
             operationId: Tests\Http\Controllers\StringResponseController
             tags:
@@ -31,4 +30,3 @@ paths:
                         application/json:
                             schema:
                                 type: string
-                                required: true
